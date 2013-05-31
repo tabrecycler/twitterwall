@@ -1,6 +1,5 @@
 var data = '';
 var refresh_url = '';
-var tweetCounter = 0;
 var colors = ['#DC4FAD','#AC193D','#D24726','#FF8F32','#82BA00','#008A17','#03B3B2','#008299','#5DB2FF','#0072C6','#4617B4','#8C0095','#004B8B','#001940','#585858','#000000' ];
 currentKeyword = '';
 var Monat = new Array("Januar", "Februar", "M&auml;rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember");
@@ -34,12 +33,12 @@ function processTime(time) {
 
 function addTweet(tweet) {
 	tweetCode = '';
-	tweetCode += '<div title="'+processTime(tweet.created_at)+'" class="tweet slideinanimation" data-counter="'+tweetCounter+'">';
+	tweetCode += '<div title="'+processTime(tweet.created_at)+'" class="tweet slideinanimation">';
     tweetCode += '<p class="username" ">'+tweet.from_user_name+' <span class="realusername">@'+ tweet.from_user +'</span></p>'
     tweetCode += '<p class="text">'+ addInformation(tweet)+'</p>';
     tweetCode += '</div>';
 	
-	$('.holdsresponse').append(tweetCode);
+	$('.holdsresponse').prepend(tweetCode);
 }
 
 function addInformation(mytweet) {
@@ -83,13 +82,14 @@ function processResponse(data, thisKeyword) {
     refresh_url = data.refresh_url + '&callback=?';
     var counter = data.results.length;
     if(counter > 0) {
-        $('.holdsresponse').html('');
-        //tweetCounter += data.results.length;
+        //no animation for existing tweets
+        $('.tweet').removeClass('slideinanimation');
         for (i=0; i < data.results.length; i++) {
             var tweet = data.results[i];
-            console.log(tweet);
+            createSpace();
+
+            //console.log(tweet);
             addTweet(tweet);
-            tweetCounter++;
         }
     }
     if(thisKeyword == currentKeyword) {
@@ -99,6 +99,10 @@ function processResponse(data, thisKeyword) {
     
 }
 
+function createSpace() {
+    //deletes last tweet
+    $('.tweet:last-child', this).remove();
+}
 
 $(document).ready(function() {
 	newColor();
@@ -106,12 +110,6 @@ $(document).ready(function() {
   		currentKeyword = $('#searchinput').val();
 	  	setSearch($('#searchinput').val());
 	});
-	
-	document.addEventListener("keydown", function(e) {
-		if (e.keyCode == 70) {
-			toggleFullScreen();
-		}
-	}, false);
 });
 
 
