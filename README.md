@@ -12,5 +12,11 @@ super simple javascript twitterwall
 Changelog
 ---------
 
-* 2013/05/31 - set maximum number of tweets to show
+* 2013/05/31 - set maximum number of tweets to show, license added
 * 2013/05/31 - new tweets append to top
+
+License
+---------
+You may use any components of TwitterWall under the terms of the MIT License.
+
+[MIT License](https://github.com/tabrecycler/twitterwall/blob/master/MIT-LICENSE.txt "https://github.com/tabrecycler/twitterwall/blob/master/MIT-LICENSE.txt")
