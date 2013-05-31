@@ -1,12 +1,15 @@
-var data = '';
+// DONT CHANGE THESE
 var refresh_url = '';
-var colors = ['#DC4FAD','#AC193D','#D24726','#FF8F32','#82BA00','#008A17','#03B3B2','#008299','#5DB2FF','#0072C6','#4617B4','#8C0095','#004B8B','#001940','#585858','#000000' ];
 currentKeyword = '';
 var Monat = new Array("Januar", "Februar", "M&auml;rz", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember");
 var mydate;
 var searchCounter = 0;
 var replaceBefore = '<span class="highlight">';
 var replaceAfter = '</span>';
+
+// YOU MAY CHANGE THESE
+var maximumTweetsToShow = 15;
+var colors = ['#DC4FAD','#AC193D','#D24726','#FF8F32','#82BA00','#008A17','#03B3B2','#008299','#5DB2FF','#0072C6','#4617B4','#8C0095','#004B8B','#001940','#585858','#000000' ];
 
 
 function newColor() {
@@ -61,6 +64,7 @@ function addInformation(mytweet) {
 function setSearch(keyword) {
 	$('title').html('TwitterWall - ' + keyword);
     refresh_url = '?callback=?&include_entities=true&q=' + escape(keyword);
+    $('.holdsresponse').html('');
     newColor();
     performSearch(keyword);
 }
@@ -101,7 +105,10 @@ function processResponse(data, thisKeyword) {
 
 function createSpace() {
     //deletes last tweet
-    $('.tweet:last-child', this).remove();
+    for(var i = $('.tweet').length; i >= maximumTweetsToShow; i-- ) {
+        $('.tweet:last-child').remove();
+    }
+    
 }
 
 $(document).ready(function() {

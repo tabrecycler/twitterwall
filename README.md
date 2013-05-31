@@ -12,4 +12,5 @@ super simple javascript twitterwall
 Changelog
 ---------
 
+* 2013/05/31 - set maximum number of tweets to show
 * 2013/05/31 - new tweets append to top
