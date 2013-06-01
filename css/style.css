@@ -108,6 +108,9 @@ body {
 	   -moz-transition: 1s all;
 	     -o-transition: 1s all;
 	     	transition: 1s all;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 #searchinput:focus {
     outline: none;

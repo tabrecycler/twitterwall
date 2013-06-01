@@ -18,14 +18,16 @@ function newColor() {
 	$('#searchinput').css('background-color', randomColor);
 	$('#searchinput').css('border-color', randomColor);
 	
-	var stylesheet = document.styleSheets[0];
-    selector = ".highlight", rule = "{color: "+randomColor+"}";
-
-	if (stylesheet.insertRule) {
-	    stylesheet.insertRule(selector + rule, stylesheet.cssRules.length);
-	} else if (stylesheet.addRule) {
-	    stylesheet.addRule(selector, rule, -1);
-	}
+	try {
+        var stylesheet = document.styleSheets[0];
+        selector = ".highlight", rule = "{color: "+randomColor+"}";
+    
+        if (stylesheet.insertRule) {
+            stylesheet.insertRule(selector + rule, stylesheet.cssRules.length);
+        } else if (stylesheet.addRule) {
+            stylesheet.addRule(selector, rule, -1);
+        }
+    } catch (e) {}
 	
 }
 
