@@ -39,7 +39,7 @@ function processTime(time) {
 function addTweet(tweet) {
 	tweetCode = '';
 	tweetCode += '<div title="'+processTime(tweet.created_at)+'" class="tweet slideinanimation">';
-    tweetCode += '<p class="username" ">'+tweet.from_user_name+' <span class="realusername">@'+ tweet.from_user +'</span></p>'
+    tweetCode += '<p class="username" ">'+tweet.user.name+' <span class="realusername">@'+ tweet.user.screen_name +'</span></p>'
     tweetCode += '<p class="text">'+ addInformation(tweet)+'</p>';
     tweetCode += '</div>';
 	
@@ -65,7 +65,7 @@ function addInformation(mytweet) {
 
 function setSearch(keyword) {
 	$('title').html('TwitterWall - ' + keyword);
-    refresh_url = '?callback=?&include_entities=true&q=' + escape(keyword);
+    refresh_url = '?callback=1&include_entities=true&q=' + escape(keyword);
     $('.holdsresponse').html('');
     newColor();
     performSearch(keyword);
@@ -77,21 +77,25 @@ function performSearch(keyword) {
 		newColor();
 		searchCounter = 0;
 	}
-    var url = 'https://search.twitter.com/search.json' + refresh_url;
+/*     var url = 'https://search.twitter.com/search.json' + refresh_url; */
+	var url = 'http://tobiashinz.de/twitterwall/backend/endpoint.php' + refresh_url;
     $.getJSON(url, function(data) {
         processResponse(data, keyword);
     });
 }
 
 
-function processResponse(data, thisKeyword) {  
-    refresh_url = data.refresh_url + '&callback=?';
-    var counter = data.results.length;
+function processResponse(data, thisKeyword) {
+	console.log(data);
+    refresh_url = data.search_metadata.refresh_url + '&callback=1';
+/*     var counter = data.results.length; */
+	var counter = data.statuses.length;
+	
     if(counter > 0) {
         //no animation for existing tweets
         $('.tweet').removeClass('slideinanimation');
-        for (i=0; i < data.results.length; i++) {
-            var tweet = data.results[i];
+        for (i=0; i < counter; i++) {
+            var tweet = data.statuses[i];
             createSpace();
 
             //console.log(tweet);
@@ -119,6 +123,14 @@ $(document).ready(function() {
   		currentKeyword = $('#searchinput').val();
 	  	setSearch($('#searchinput').val());
 	});
+	
+	$(document).keyup(function(e) {
+		//c pressed
+		if (e.keyCode == 67) { 
+			newColor();
+		}   
+	});
+	
 });
 
 
