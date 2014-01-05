@@ -12,6 +12,7 @@ super simple javascript twitterwall
 Changelog
 ---------
 
+* 2014/01/05 - inline photo support, analyzing remaining api calls, config file for easier access
 * 2013/06/01 - fixed bug iOS devices, iOS WebApp capable
 * 2013/05/31 - set maximum number of tweets to show, license added
 * 2013/05/31 - new tweets append to top
