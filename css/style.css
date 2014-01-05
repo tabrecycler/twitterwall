@@ -77,6 +77,10 @@ body {
 .tweet .text {
 	line-height: 1.2em;
 }
+.tweet img {
+    max-width: 30em;
+    margin-top: 1em;
+}
 .highlight {
 	-webkit-transition: 1s color;
 	   -moz-transition: 1s color;

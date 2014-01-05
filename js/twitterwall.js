@@ -13,12 +13,12 @@ var colors = ['#DC4FAD','#AC193D','#D24726','#FF8F32','#82BA00','#008A17','#03B3
 
 
 function newColor() {
-	var randomColor = colors[Math.floor(Math.random()*colors.length)];
-	$('body').css('background-color', randomColor);
-	$('#searchinput').css('background-color', randomColor);
-	$('#searchinput').css('border-color', randomColor);
-	
-	try {
+    var randomColor = colors[Math.floor(Math.random()*colors.length)];
+    $('body').css('background-color', randomColor);
+    $('#searchinput').css('background-color', randomColor);
+    $('#searchinput').css('border-color', randomColor);
+    
+    try {
         var stylesheet = document.styleSheets[0];
         selector = ".highlight", rule = "{color: "+randomColor+"}";
     
@@ -28,28 +28,38 @@ function newColor() {
             stylesheet.addRule(selector, rule, -1);
         }
     } catch (e) {}
-	
+    
 }
 
 function processTime(time) {
-	mydate = new Date(time);
-	return mydate.getDate() + '. ' + Monat[mydate.getMonth()] + ' ' + (mydate.getYear()+1900)  + ' ' + mydate.getHours() + ':' + mydate.getMinutes() + ':' + mydate.getSeconds() + 'Uhr';
+    mydate = new Date(time);
+    return mydate.getDate() + '. ' + Monat[mydate.getMonth()] + ' ' + (mydate.getYear()+1900)  + ' ' + mydate.getHours() + ':' + mydate.getMinutes() + ':' + mydate.getSeconds() + 'Uhr';
 }
 
 function addTweet(tweet) {
-	tweetCode = '';
-	tweetCode += '<div title="'+processTime(tweet.created_at)+'" class="tweet slideinanimation">';
+    tweetCode = '';
+    tweetCode += '<div title="'+processTime(tweet.created_at)+'" class="tweet slideinanimation">';
     tweetCode += '<p class="username" ">'+tweet.user.name+' <span class="realusername">@'+ tweet.user.screen_name +'</span></p>'
     tweetCode += '<p class="text">'+ addInformation(tweet)+'</p>';
+
+    //check for image
+    if(tweet['entities']['media'] !== undefined) {
+        tweetCode += '<img src="'+tweet['entities']['media'][0]['media_url_https']+'">';
+
+        // URL des Bildes entfernen
+        console.log(tweet['entities']);
+        tweetCode = tweetCode.replace(tweet['entities']['media'][0]['url'], '');
+
+    }
     tweetCode += '</div>';
-	
-	$('.holdsresponse').prepend(tweetCode);
+    
+    $('.holdsresponse').prepend(tweetCode);
 }
 
 function addInformation(mytweet) {
-	var offset = 0;
-	var theText = mytweet.text;
-	for (var i = 0; i < mytweet['entities']['hashtags']['length']; i++) {
+    var offset = 0;
+    var theText = mytweet.text;
+    for (var i = 0; i < mytweet['entities']['hashtags']['length']; i++) {
         var begin = mytweet['entities']['hashtags'][i]['indices'][0] + offset;
         offset += replaceBefore.length;
         
@@ -59,52 +69,56 @@ function addInformation(mytweet) {
         theText = [theText.slice(0, begin), replaceBefore , theText.slice(begin)].join('');
         theText = [theText.slice(0, end), replaceAfter , theText.slice(end)].join('');
     }
-	
-	return theText;
+
+
+    
+    
+    return theText;
 }
 
 function setSearch(keyword) {
-	$('title').html('TwitterWall - ' + keyword);
-    refresh_url = '?callback=1&include_entities=true&q=' + escape(keyword);
+    $('title').html('TwitterWall - ' + keyword);
+    refresh_url = '?callback=1&include_entities=true&q=' + encodeURIComponent(keyword);
     $('.holdsresponse').html('');
     newColor();
     performSearch(keyword);
 }
 
 function performSearch(keyword) {
-	searchCounter++;
-	if((searchCounter % 3) == 0) {
-		newColor();
-		searchCounter = 0;
-	}
-/*     var url = 'https://search.twitter.com/search.json' + refresh_url; */
-	var url = 'http://tobiashinz.de/twitterwall/backend/endpoint.php' + refresh_url;
-    $.getJSON(url, function(data) {
-        processResponse(data, keyword);
-    });
+    searchCounter++;
+    if((searchCounter % 3) == 0) {
+        newColor();
+        getRemainingCalls();
+        searchCounter = 0;
+    }
+    var url = 'http://tobiashinz.de/twitterwall/backend/endpoint.php' + refresh_url;
+
+    var jqxhr = $.getJSON( url, function() {})
+        .done(function( data ) {
+            processResponse(data, keyword);
+        })
+        .fail(function() {
+            alert("Fehler!");
+        })
 }
 
 
 function processResponse(data, thisKeyword) {
-	console.log(data);
     refresh_url = data.search_metadata.refresh_url + '&callback=1';
-/*     var counter = data.results.length; */
-	var counter = data.statuses.length;
-	
+    var counter = data.statuses.length;
+    
     if(counter > 0) {
         //no animation for existing tweets
         $('.tweet').removeClass('slideinanimation');
-        for (i=0; i < counter; i++) {
+        for (i = counter - 1; i >= 0; i--) {
             var tweet = data.statuses[i];
             createSpace();
-
-            //console.log(tweet);
             addTweet(tweet);
         }
     }
     if(thisKeyword == currentKeyword) {
-    	functionString = 'performSearch("' + thisKeyword + '")';
-	    setTimeout(functionString, 10000);
+        functionString = 'performSearch("' + thisKeyword + '")';
+        setTimeout(functionString, 10000);
     }
     
 }
@@ -117,20 +131,35 @@ function createSpace() {
     
 }
 
+function getRemainingCalls() {
+    var remainingCallsUrl = 'http://tobiashinz.de/twitterwall/backend/remainingcalls.php';
+    $.getJSON(remainingCallsUrl, function(data) {
+        var remaining = data.resources.search["/search/tweets"].remaining;
+        var limit = data.resources.search["/search/tweets"].limit;
+        
+        //all calls used?
+        if(remaining == 0) {
+            alert("Calls are empty. Please wait.");
+        }
+    });
+}
+
 $(document).ready(function() {
-	newColor();
-  	$('#searchinput').change(function(){ 
-  		currentKeyword = $('#searchinput').val();
-	  	setSearch($('#searchinput').val());
-	});
-	
-	$(document).keyup(function(e) {
-		//c pressed
-		if (e.keyCode == 67) { 
-			newColor();
-		}   
-	});
-	
+    newColor();
+    $('#searchinput').change(function(){ 
+        currentKeyword = $('#searchinput').val();
+        setSearch($('#searchinput').val());
+    });
+    
+    $(document).keyup(function(e) {
+        //c pressed
+        if (e.keyCode == 67) { 
+            newColor();
+            searchCounter = 0;
+
+        }   
+    });
+    
 });
 
 
