@@ -1,0 +1,5 @@
+# Ignore sass-cache files.
+*.sass-cache*
+
+# Ignore Compass log file
+compass_app_log.txt
