@@ -21,4 +21,4 @@ License
 ---------
 You may use any components of TwitterWall under the terms of the MIT License.
 
-[MIT License](https://github.com/tabrecycler/twitterwall/blob/master/MIT-LICENSE.txt "https://github.com/tabrecycler/twitterwall/blob/master/MIT-LICENSE.txt")
+[MIT License](https://github.com/tobiashinz/twitterwall/blob/master/MIT-LICENSE.txt "https://github.com/tobiashinz/twitterwall/blob/master/MIT-LICENSE.txt")
