@@ -1,5 +1,11 @@
 # Ignore sass-cache files.
 *.sass-cache*
 
-# Ignore Compass log file
-compass_app_log.txt
+# General Stuff
+.DS_Store
+
+# Node Stuff
+node_modules
+
+# Output
+dist/
